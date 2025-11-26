@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🔤 Handwritten Text Recognition (OCR) System
 
 A production-grade, portfolio-worthy Handwritten Text Recognition system using deep learning. This project combines state-of-the-art computer vision techniques with a modern web interface for real-world text extraction from handwritten images.
@@ -471,3 +472,6 @@ Perfect for internships, hackathons, and job applications! 🚀
 
 **Made with ❤️ using PyTorch, Flask, and MLflow**
 
+=======
+Just created a file
+>>>>>>> 377a5ab40d99a3735aaa013cada5de55a317511f
