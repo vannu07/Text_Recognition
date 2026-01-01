@@ -21,9 +21,11 @@ from src.utils import preprocess_image, ctc_decode, get_default_charset
 
 
 # Initialize Flask app
-app = Flask(__name__, 
-           template_folder='templates',
-           static_folder='static')
+app = Flask(
+    __name__,
+    template_folder='templates',
+    static_folder='static'
+)
 CORS(app)
 
 # Global variables for model and charset
@@ -31,6 +33,7 @@ model = None
 charset = None
 device = None
 config = None
+DEFAULT_MODEL_PATH = os.getenv('MODEL_PATH', 'models/best_model.pkl')
 
 
 def load_model_from_pickle(model_path='models/best_model.pkl'):
@@ -262,7 +265,7 @@ def info():
     })
 
 
-def initialize_app(model_path='models/best_model.pkl'):
+def initialize_app(model_path=None, force=False):
     """
     Initialize the application by loading the model
     
@@ -270,23 +273,30 @@ def initialize_app(model_path='models/best_model.pkl'):
         model_path (str): Path to model file
     """
     global model, charset, device, config
+
+    # Skip if already initialized unless force reload is requested
+    if model is not None and not force:
+        return
+
+    selected_model_path = model_path or DEFAULT_MODEL_PATH
     
     print("\n" + "="*60)
     print("Initializing OCR Flask Application")
     print("="*60)
     
     # Load model
-    model, charset, device, config = load_model_from_pickle(model_path)
+    model, charset, device, config = load_model_from_pickle(selected_model_path)
     
     print("="*60)
     print("✓ Application initialized successfully!")
     print("="*60 + "\n")
 
 
+# Initialize model at import time so all server runners have it loaded
+initialize_app(DEFAULT_MODEL_PATH)
+
+
 if __name__ == '__main__':
-    # Initialize app
-    initialize_app()
-    
     # Run Flask app
     print("\nStarting Flask server...")
     print("Open http://localhost:5000 in your browser\n")
