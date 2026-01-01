@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwritten Text Recognition - OCR System</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <i class="fas fa-spell-check logo-icon"></i>
+                <h1 class="title">Handwritten Text Recognition</h1>
+            </div>
+            <p class="subtitle">AI-Powered OCR System with Deep Learning</p>
+            <div class="header-stats">
+                <div class="stat-item"><i class="fas fa-brain"></i><span>CRNN + ResNet18</span></div>
+                <div class="stat-item"><i class="fas fa-bolt"></i><span>Real-time Processing</span></div>
+                <div class="stat-item"><i class="fas fa-check-circle"></i><span>High Accuracy</span></div>
+            </div>
+        </header>
+        <main class="main-content">
+            <div class="upload-section card">
+                <div class="upload-header">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h2>Upload Image</h2>
+                    <p class="upload-hint">Choose an input method to get started</p>
+                </div>
+                <div class="input-methods">
+                    <button class="method-btn active" onclick="switchMethod('upload')"><i class="fas fa-file-upload"></i><span>Upload File</span></button>
+                    <button class="method-btn" onclick="switchMethod('webcam')"><i class="fas fa-camera"></i><span>Webcam</span></button>
+                    <button class="method-btn" onclick="switchMethod('url')"><i class="fas fa-link"></i><span>From URL</span></button>
+                </div>
+                <div id="uploadMethod" class="method-content active">
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                    <div class="upload-drop-zone" onclick="document.getElementById('imageInput').click()">
+                        <i class="fas fa-images"></i>
+                        <p>Click to browse or drag & drop</p>
+                        <span class="file-types">Supports: JPG, PNG, WEBP</span>
+                    </div>
+                </div>
+                <div id="webcamMethod" class="method-content">
+                    <video id="webcam" autoplay playsinline></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    <div class="webcam-controls">
+                        <button class="action-btn" id="startWebcam" onclick="startWebcam()"><i class="fas fa-video"></i> Start Camera</button>
+                        <button class="action-btn" id="captureBtn" onclick="captureImage()" style="display: none;"><i class="fas fa-camera"></i> Capture</button>
+                        <button class="action-btn secondary" id="stopWebcam" onclick="stopWebcam()" style="display: none;"><i class="fas fa-stop"></i> Stop</button>
+                    </div>
+                </div>
+                <div id="urlMethod" class="method-content">
+                    <input type="text" id="imageUrl" class="url-input" placeholder="Enter image URL...">
+                    <button class="action-btn" onclick="loadFromUrl()"><i class="fas fa-download"></i> Load Image</button>
+                </div>
+                <div id="imagePreview" class="image-preview" style="display: none;">
+                    <div class="preview-header">
+                        <span class="preview-title">Preview</span>
+                        <button class="icon-btn" onclick="removeImage()"><i class="fas fa-times"></i></button>
+                    </div>
+                    <img id="previewImg" src="" alt="Preview">
+                    <div class="image-info">
+                        <span id="imageSize">Size: --</span>
+                        <span id="imageDimensions">Dimensions: --</span>
+                    </div>
+                </div>
+            </div>
+            <div class="action-section">
+                <button id="extractBtn" class="extract-btn" onclick="extractText()" disabled>
+                    <i class="fas fa-magic"></i>
+                    <span class="btn-text">Extract Text</span>
+                    <span class="loader" style="display: none;"></span>
+                </button>
+            </div>
+            <div class="result-section card" id="resultSection" style="display: none;">
+                <div class="result-header">
+                    <h2><i class="fas fa-file-alt"></i> Extracted Text</h2>
+                    <div class="result-meta">
+                        <span id="processingTime">Processing time: --</span>
+                        <span id="confidence">Confidence: High</span>
+                    </div>
+                </div>
+                <div class="result-box">
+                    <textarea id="resultText" placeholder="Extracted text will appear here..."></textarea>
+                    <div class="text-stats">
+                        <span id="charCount">Characters: 0</span>
+                        <span id="wordCount">Words: 0</span>
+                        <span id="lineCount">Lines: 0</span>
+                    </div>
+                </div>
+                <div class="result-actions">
+                    <button class="action-btn success" onclick="copyText()"><i class="fas fa-copy"></i> Copy</button>
+                    <button class="action-btn" onclick="downloadText()"><i class="fas fa-download"></i> Download</button>
+                    <button class="action-btn" onclick="speakText()"><i class="fas fa-volume-up"></i> Speak</button>
+                    <button class="action-btn secondary" onclick="clearResults()"><i class="fas fa-trash"></i> Clear</button>
+                </div>
+            </div>
+        </main>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4><i class="fas fa-code"></i> Technology Stack</h4>
+                    <div class="tech-badges">
+                        <span class="badge">PyTorch</span>
+                        <span class="badge">ResNet18</span>
+                        <span class="badge">BiLSTM</span>
+                        <span class="badge">CTC Loss</span>
+                        <span class="badge">Flask</span>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4><i class="fas fa-info-circle"></i> About</h4>
+                    <p>Advanced OCR system using deep learning for handwritten text recognition</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Text Recognition System | Built with <i class="fas fa-heart"></i> using AI</p>
+            </div>
+        </footer>
+        <div id="toast" class="toast"></div>
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p>Processing image...</p>
+            </div>
+        </div>
+    </div>
+    <script src="/static/app.js"></script>
+</body>
+</html>
